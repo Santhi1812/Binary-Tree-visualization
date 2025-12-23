@@ -1,9 +1,9 @@
-<!doctype html>
+<!doctype doctype>
 <html lang="en">
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BST Traversal Visualizer</title>
+  <title>Binary Tree Left View</title>
   <script src="/_sdk/element_sdk.js"></script>
   <style>
     body {
@@ -24,33 +24,73 @@
     .app-wrapper {
       height: 100%;
       width: 100%;
-      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e22ce 100%);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 24px;
+      padding: 32px 24px;
       overflow: auto;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       position: relative;
     }
 
-    .header {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #ffffff;
+    .app-wrapper::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        url("data:image/svg+xml,%3Csvg width='200' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.15'%3E%3Ccircle cx='100' cy='50' r='8' fill='%23fff'/%3E%3Cline x1='100' y1='58' x2='80' y2='90' stroke='%23fff' stroke-width='3'/%3E%3Cline x1='100' y1='58' x2='120' y2='90' stroke='%23fff' stroke-width='3'/%3E%3Ccircle cx='80' cy='90' r='6' fill='%23fff'/%3E%3Ccircle cx='120' cy='90' r='6' fill='%23fff'/%3E%3Cline x1='80' y1='96' x2='65' y2='120' stroke='%23fff' stroke-width='2'/%3E%3Cline x1='80' y1='96' x2='95' y2='120' stroke='%23fff' stroke-width='2'/%3E%3Cline x1='120' y1='96' x2='105' y2='120' stroke='%23fff' stroke-width='2'/%3E%3Cline x1='120' y1='96' x2='135' y2='120' stroke='%23fff' stroke-width='2'/%3E%3Ccircle cx='65' cy='120' r='4' fill='%23fff'/%3E%3Ccircle cx='95' cy='120' r='4' fill='%23fff'/%3E%3Ccircle cx='105' cy='120' r='4' fill='%23fff'/%3E%3Ccircle cx='135' cy='120' r='4' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg width='150' height='250' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.1'%3E%3Ccircle cx='75' cy='40' r='10' fill='%23fff'/%3E%3Cline x1='75' y1='50' x2='50' y2='90' stroke='%23fff' stroke-width='4'/%3E%3Cline x1='75' y1='50' x2='100' y2='90' stroke='%23fff' stroke-width='4'/%3E%3Ccircle cx='50' cy='90' r='7' fill='%23fff'/%3E%3Ccircle cx='100' cy='90' r='7' fill='%23fff'/%3E%3Cline x1='50' y1='97' x2='35' y2='125' stroke='%23fff' stroke-width='3'/%3E%3Cline x1='50' y1='97' x2='65' y2='125' stroke='%23fff' stroke-width='3'/%3E%3Ccircle cx='35' cy='125' r='5' fill='%23fff'/%3E%3Ccircle cx='65' cy='125' r='5' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg width='160' height='220' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.13'%3E%3Ccircle cx='80' cy='35' r='7' fill='%23fff'/%3E%3Cline x1='80' y1='42' x2='65' y2='70' stroke='%23fff' stroke-width='3'/%3E%3Cline x1='80' y1='42' x2='95' y2='70' stroke='%23fff' stroke-width='3'/%3E%3Ccircle cx='65' cy='70' r='5' fill='%23fff'/%3E%3Ccircle cx='95' cy='70' r='5' fill='%23fff'/%3E%3Cline x1='65' y1='75' x2='55' y2='95' stroke='%23fff' stroke-width='2'/%3E%3Cline x1='95' y1='75' x2='105' y2='95' stroke='%23fff' stroke-width='2'/%3E%3Ccircle cx='55' cy='95' r='4' fill='%23fff'/%3E%3Ccircle cx='105' cy='95' r='4' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg width='140' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.11'%3E%3Ccircle cx='70' cy='30' r='6' fill='%23fff'/%3E%3Cline x1='70' y1='36' x2='55' y2='60' stroke='%23fff' stroke-width='2.5'/%3E%3Cline x1='70' y1='36' x2='85' y2='60' stroke='%23fff' stroke-width='2.5'/%3E%3Ccircle cx='55' cy='60' r='5' fill='%23fff'/%3E%3Ccircle cx='85' cy='60' r='5' fill='%23fff'/%3E%3Cline x1='55' y1='65' x2='45' y2='85' stroke='%23fff' stroke-width='2'/%3E%3Cline x1='55' y1='65' x2='65' y2='85' stroke='%23fff' stroke-width='2'/%3E%3Ccircle cx='45' cy='85' r='3.5' fill='%23fff'/%3E%3Ccircle cx='65' cy='85' r='3.5' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E");
+      background-position: 5% 15%, 90% 55%, 15% 75%, 75% 25%;
+      background-repeat: no-repeat;
+      background-size: 250px, 200px, 180px, 160px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .app-wrapper::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        url("data:image/svg+xml,%3Csvg width='180' height='280' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.12'%3E%3Ccircle cx='90' cy='45' r='9' fill='%23fff'/%3E%3Cline x1='90' y1='54' x2='70' y2='85' stroke='%23fff' stroke-width='3.5'/%3E%3Cline x1='90' y1='54' x2='110' y2='85' stroke='%23fff' stroke-width='3.5'/%3E%3Ccircle cx='70' cy='85' r='6.5' fill='%23fff'/%3E%3Ccircle cx='110' cy='85' r='6.5' fill='%23fff'/%3E%3Cline x1='70' y1='91.5' x2='55' y2='115' stroke='%23fff' stroke-width='2.5'/%3E%3Cline x1='70' y1='91.5' x2='85' y2='115' stroke='%23fff' stroke-width='2.5'/%3E%3Ccircle cx='55' cy='115' r='4.5' fill='%23fff'/%3E%3Ccircle cx='85' cy='115' r='4.5' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg width='170' height='240' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.14'%3E%3Ccircle cx='85' cy='40' r='8' fill='%23fff'/%3E%3Cline x1='85' y1='48' x2='68' y2='75' stroke='%23fff' stroke-width='3'/%3E%3Cline x1='85' y1='48' x2='102' y2='75' stroke='%23fff' stroke-width='3'/%3E%3Ccircle cx='68' cy='75' r='6' fill='%23fff'/%3E%3Ccircle cx='102' cy='75' r='6' fill='%23fff'/%3E%3Cline x1='68' y1='81' x2='58' y2='100' stroke='%23fff' stroke-width='2.5'/%3E%3Cline x1='68' y1='81' x2='78' y2='100' stroke='%23fff' stroke-width='2.5'/%3E%3Ccircle cx='58' cy='100' r='4' fill='%23fff'/%3E%3Ccircle cx='78' cy='100' r='4' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg width='130' height='190' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.1'%3E%3Ccircle cx='65' cy='28' r='7' fill='%23fff'/%3E%3Cline x1='65' y1='35' x2='50' y2='58' stroke='%23fff' stroke-width='2.5'/%3E%3Cline x1='65' y1='35' x2='80' y2='58' stroke='%23fff' stroke-width='2.5'/%3E%3Ccircle cx='50' cy='58' r='5' fill='%23fff'/%3E%3Ccircle cx='80' cy='58' r='5' fill='%23fff'/%3E%3Cline x1='50' y1='63' x2='42' y2='80' stroke='%23fff' stroke-width='2'/%3E%3Cline x1='80' y1='63' x2='88' y2='80' stroke='%23fff' stroke-width='2'/%3E%3Ccircle cx='42' cy='80' r='3.5' fill='%23fff'/%3E%3Ccircle cx='88' cy='80' r='3.5' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E");
+      background-position: 50% 65%, 25% 40%, 82% 80%;
+      background-repeat: no-repeat;
+      background-size: 220px, 200px, 150px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .header, .controls, .tree-container, .legend, .info-box, .app-wrapper > div {
       position: relative;
       z-index: 1;
     }
 
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+      color: #ffffff;
+    }
+
     .header h1 {
-      font-size: 38px;
+      font-size: 42px;
       font-weight: 700;
-      margin-bottom: 6px;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      margin-bottom: 8px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
     }
 
     .header p {
-      font-size: 16px;
+      font-size: 18px;
       opacity: 0.95;
     }
 
@@ -58,51 +98,43 @@
       background: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(10px);
       border-radius: 16px;
-      padding: 20px 28px;
-      margin-bottom: 20px;
+      padding: 20px 32px;
+      margin-bottom: 32px;
       display: flex;
-      gap: 12px;
+      gap: 16px;
       flex-wrap: wrap;
       justify-content: center;
       align-items: center;
-      position: relative;
-      z-index: 1;
     }
 
     .controls button {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
       color: white;
       border: none;
-      padding: 12px 24px;
+      padding: 12px 28px;
       border-radius: 24px;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
     }
 
     .controls button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+      box-shadow: 0 6px 20px rgba(240, 147, 251, 0.6);
     }
 
     .controls button:active {
       transform: translateY(0);
     }
 
-    .controls button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
-
     .tree-input {
       padding: 12px 20px;
       border-radius: 24px;
       border: 3px solid rgba(255, 255, 255, 0.3);
-      font-size: 15px;
-      min-width: 300px;
+      font-size: 16px;
+      min-width: 350px;
       background: rgba(255, 255, 255, 0.95);
       color: #2d3436;
       font-weight: 600;
@@ -111,30 +143,47 @@
 
     .tree-input:focus {
       outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+      border-color: #f093fb;
+      box-shadow: 0 0 20px rgba(240, 147, 251, 0.5);
     }
 
     .tree-input::placeholder {
       color: #95a5a6;
     }
 
-    .main-content {
-      display: flex;
-      gap: 20px;
-      width: 100%;
-      max-width: 1400px;
-      position: relative;
-      z-index: 1;
-    }
-
     .tree-container {
-      flex: 1;
       background: rgba(255, 255, 255, 0.95);
       border-radius: 20px;
-      padding: 30px;
+      padding: 40px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      min-height: 500px;
+      min-width: 800px;
+      position: relative;
+    }
+
+    .tree-container::before {
+      content: '';
+      position: absolute;
+      left: -120px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100px;
+      height: 180px;
+      background-image: url("data:image/svg+xml,%3Csvg width='100' height='180' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.3'%3E%3Ccircle cx='50' cy='30' r='8' fill='%23667eea'/%3E%3Cline x1='50' y1='38' x2='35' y2='60' stroke='%23667eea' stroke-width='3'/%3E%3Cline x1='50' y1='38' x2='65' y2='60' stroke='%23667eea' stroke-width='3'/%3E%3Ccircle cx='35' cy='60' r='6' fill='%23764ba2'/%3E%3Ccircle cx='65' cy='60' r='6' fill='%23764ba2'/%3E%3Cline x1='35' y1='66' x2='25' y2='85' stroke='%23667eea' stroke-width='2.5'/%3E%3Cline x1='35' y1='66' x2='45' y2='85' stroke='%23667eea' stroke-width='2.5'/%3E%3Cline x1='65' y1='66' x2='55' y2='85' stroke='%23667eea' stroke-width='2.5'/%3E%3Cline x1='65' y1='66' x2='75' y2='85' stroke='%23667eea' stroke-width='2.5'/%3E%3Ccircle cx='25' cy='85' r='4' fill='%23764ba2'/%3E%3Ccircle cx='45' cy='85' r='4' fill='%23764ba2'/%3E%3Ccircle cx='55' cy='85' r='4' fill='%23764ba2'/%3E%3Ccircle cx='75' cy='85' r='4' fill='%23764ba2'/%3E%3C/g%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      pointer-events: none;
+    }
+
+    .tree-container::after {
+      content: '';
+      position: absolute;
+      right: -120px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100px;
+      height: 180px;
+      background-image: url("data:image/svg+xml,%3Csvg width='100' height='180' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.3'%3E%3Ccircle cx='50' cy='30' r='8' fill='%23f093fb'/%3E%3Cline x1='50' y1='38' x2='35' y2='60' stroke='%23f093fb' stroke-width='3'/%3E%3Cline x1='50' y1='38' x2='65' y2='60' stroke='%23f093fb' stroke-width='3'/%3E%3Ccircle cx='35' cy='60' r='6' fill='%23f5576c'/%3E%3Ccircle cx='65' cy='60' r='6' fill='%23f5576c'/%3E%3Cline x1='35' y1='66' x2='25' y2='85' stroke='%23f093fb' stroke-width='2.5'/%3E%3Cline x1='35' y1='66' x2='45' y2='85' stroke='%23f093fb' stroke-width='2.5'/%3E%3Cline x1='65' y1='66' x2='55' y2='85' stroke='%23f093fb' stroke-width='2.5'/%3E%3Cline x1='65' y1='66' x2='75' y2='85' stroke='%23f093fb' stroke-width='2.5'/%3E%3Ccircle cx='25' cy='85' r='4' fill='%23f5576c'/%3E%3Ccircle cx='45' cy='85' r='4' fill='%23f5576c'/%3E%3Ccircle cx='55' cy='85' r='4' fill='%23f5576c'/%3E%3Ccircle cx='75' cy='85' r='4' fill='%23f5576c'/%3E%3C/g%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      pointer-events: none;
     }
 
     .tree-svg {
@@ -152,7 +201,7 @@
     }
 
     .node-text {
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 700;
       pointer-events: none;
       text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
@@ -165,242 +214,59 @@
       transition: all 0.3s ease;
     }
 
-    .visiting-node {
-      animation: pulse 0.6s ease-in-out;
+    .left-view-node {
+      filter: drop-shadow(0 0 15px rgba(240, 147, 251, 0.8));
     }
 
-    @keyframes pulse {
-      0%, 100% { 
-        transform: scale(1);
-        filter: drop-shadow(0 0 8px rgba(250, 204, 21, 0.8));
-      }
-      50% { 
-        transform: scale(1.15);
-        filter: drop-shadow(0 0 20px rgba(250, 204, 21, 1));
-      }
-    }
-
-    .traversal-panel {
-      width: 320px;
-      background: rgba(255, 255, 255, 0.95);
+    .level-indicator {
+      position: absolute;
+      left: 8px;
+      background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+      color: #2d3436;
+      padding: 6px 14px;
       border-radius: 20px;
-      padding: 24px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      max-height: 560px;
-      overflow-y: auto;
-    }
-
-    .traversal-panel h3 {
-      color: #2d3436;
-      font-size: 20px;
-      margin-bottom: 16px;
-      text-align: center;
-      border-bottom: 3px solid #667eea;
-      padding-bottom: 10px;
-    }
-
-    .traversal-method {
-      margin-bottom: 20px;
-      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-      padding: 14px;
-      border-radius: 12px;
-      border-left: 4px solid #667eea;
-    }
-
-    .traversal-method h4 {
-      color: #667eea;
-      font-size: 15px;
-      margin-bottom: 8px;
-      font-weight: 700;
-    }
-
-    .traversal-sequence {
-      color: #2d3436;
-      font-size: 14px;
       font-weight: 600;
-      line-height: 1.6;
-      word-wrap: break-word;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(253, 203, 110, 0.4);
+    }
+
+    .legend {
+      margin-top: 24px;
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      padding: 10px 20px;
+      border-radius: 20px;
+      color: white;
+      font-weight: 600;
+    }
+
+    .legend-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 3px solid white;
     }
 
     .info-box {
       background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
       border-radius: 16px;
-      padding: 18px;
-      margin-top: 20px;
+      padding: 20px;
+      margin-top: 24px;
       color: #2d3436;
       text-align: center;
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 600;
       box-shadow: 0 8px 20px rgba(168, 237, 234, 0.3);
-      max-width: 1400px;
-      width: 100%;
-      position: relative;
-      z-index: 1;
-    }
-
-    .speed-control {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: white;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 8px 16px;
-      border-radius: 20px;
-    }
-
-    .speed-control label {
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .speed-control input[type="range"] {
-      width: 100px;
-      cursor: pointer;
-    }
-
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .modal-content {
-      background: white;
-      border-radius: 20px;
-      padding: 32px;
-      max-width: 500px;
-      width: 90%;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-      animation: slideUp 0.3s ease;
-      position: relative;
-    }
-
-    @keyframes slideUp {
-      from { 
-        transform: translateY(50px);
-        opacity: 0;
-      }
-      to { 
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-
-    .modal-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 20px;
-      padding-bottom: 16px;
-      border-bottom: 3px solid #667eea;
-    }
-
-    .modal-icon {
-      font-size: 32px;
-    }
-
-    .modal-header h2 {
-      color: #667eea;
-      font-size: 24px;
-      font-weight: 700;
-      margin: 0;
-    }
-
-    .modal-body {
-      color: #2d3436;
-      line-height: 1.8;
-      margin-bottom: 24px;
-    }
-
-    .modal-body h3 {
-      color: #667eea;
-      font-size: 18px;
-      margin-top: 16px;
-      margin-bottom: 8px;
-      font-weight: 700;
-    }
-
-    .modal-body p {
-      margin-bottom: 12px;
-      font-size: 15px;
-    }
-
-    .modal-body .order-highlight {
-      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-      color: white;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-weight: 700;
-      display: inline-block;
-      margin: 8px 0;
-    }
-
-    .modal-body .example-tree {
-      background: #f8f9fa;
-      padding: 16px;
-      border-radius: 12px;
-      margin: 12px 0;
-      text-align: center;
-      font-family: monospace;
-      font-size: 14px;
-      line-height: 2;
-    }
-
-    .modal-footer {
-      display: flex;
-      gap: 12px;
-      justify-content: flex-end;
-    }
-
-    .modal-button {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      padding: 12px 28px;
-      border-radius: 24px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-    }
-
-    .modal-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-    }
-
-    .modal-button.cancel {
-      background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
-    }
-
-    @media (max-width: 1024px) {
-      .main-content {
-        flex-direction: column;
-      }
-
-      .traversal-panel {
-        width: 100%;
-        max-height: none;
-      }
-
-      .modal-content {
-        padding: 24px;
-        max-width: 90%;
-      }
     }
   </style>
   <style>@view-transition { navigation: auto; }</style>
@@ -410,64 +276,36 @@
  <body>
   <div class="app-wrapper">
    <div class="header">
-    <h1 id="main-title">Binary Search Tree Traversals</h1>
-    <p id="subtitle">Watch nodes light up in traversal order! ✨</p>
+    <h1 id="tree-title">Binary Tree Left View</h1>
+    <p id="instruction-text">Click "Show Left View" to highlight the leftmost nodes at each level</p>
    </div>
-   <div class="controls"><input type="text" id="treeInput" class="tree-input" placeholder="Enter values: e.g., 50,30,70,20,40,60,80"> <button onclick="buildBSTFromInput()">Build BST</button> <button id="inorderBtn" onclick="startTraversal('inorder')">Inorder</button> <button id="preorderBtn" onclick="startTraversal('preorder')">Preorder</button> <button id="postorderBtn" onclick="startTraversal('postorder')">Postorder</button> <button id="levelorderBtn" onclick="startTraversal('levelorder')">Level Order</button> <button onclick="stopTraversal()">Stop</button>
-    <div class="speed-control"><label for="speedSlider">Speed:</label> <input type="range" id="speedSlider" min="200" max="2000" value="800" step="200">
-    </div>
+   <div class="controls"><button onclick="showLeftView()">Show Left View</button> <input type="text" id="treeInput" class="tree-input" placeholder="e.g., 1,2,3,null,5,6,7"> <button onclick="generateTreeFromInput()">Generate Tree</button> <button onclick="resetView()">Reset View</button>
    </div>
-   <div class="main-content">
-    <div class="tree-container">
-     <svg class="tree-svg" id="treeSvg"></svg>
+   <div class="tree-container">
+    <svg class="tree-svg" id="treeSvg"></svg>
+   </div>
+   <div class="legend">
+    <div class="legend-item">
+     <div class="legend-circle" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div><span>Regular Node</span>
     </div>
-    <div class="traversal-panel">
-     <h3>📊 Traversal Results</h3>
-     <div class="traversal-method">
-      <h4>Inorder (Left-Root-Right)</h4>
-      <div class="traversal-sequence" id="inorderSequence">
-       —
-      </div>
-     </div>
-     <div class="traversal-method">
-      <h4>Preorder (Root-Left-Right)</h4>
-      <div class="traversal-sequence" id="preorderSequence">
-       —
-      </div>
-     </div>
-     <div class="traversal-method">
-      <h4>Postorder (Left-Right-Root)</h4>
-      <div class="traversal-sequence" id="postorderSequence">
-       —
-      </div>
-     </div>
-     <div class="traversal-method">
-      <h4>Level Order (BFS)</h4>
-      <div class="traversal-sequence" id="levelorderSequence">
-       —
-      </div>
-     </div>
+    <div class="legend-item">
+     <div class="legend-circle" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div><span>Left View Node</span>
     </div>
    </div>
    <div class="info-box" id="infoBox">
-    🎯 Enter comma-separated values to build your BST, then click any traversal method to watch the animation!
+    The left view shows the first node encountered at each level when viewing the tree from the left side.
    </div>
-   <div id="modalOverlay" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-     <div class="modal-header"><span class="modal-icon" id="modalIcon">🌳</span>
-      <h2 id="modalTitle">Traversal Method</h2>
-     </div>
-     <div class="modal-body" id="modalBody"><!-- Content will be dynamically inserted -->
-     </div>
-     <div class="modal-footer"><button class="modal-button cancel" onclick="closeModal()">Cancel</button> <button class="modal-button" id="startButton" onclick="confirmTraversal()">Start Animation</button>
-     </div>
-    </div>
+   <div style="margin-top: 16px; padding: 16px 24px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border-radius: 16px; color: white; max-width: 800px;">
+    <h3 style="margin-bottom: 12px; font-size: 18px;">💡 How to Create Your Own Tree:</h3>
+    <p style="margin-bottom: 8px; line-height: 1.6;"><strong>Format:</strong> Enter values separated by commas, level by level from left to right.</p>
+    <p style="margin-bottom: 8px; line-height: 1.6;"><strong>Use "null"</strong> for empty nodes.</p>
+    <p style="line-height: 1.6;"><strong>Example:</strong> <code style="background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px;">1,2,3,4,5,null,6</code> creates a tree with root 1, children 2 and 3, and so on.</p>
    </div>
   </div>
   <script>
     const defaultConfig = {
-      main_title: "Binary Search Tree Traversals",
-      subtitle: "Watch nodes light up in traversal order! ✨"
+      tree_title: "Binary Tree Left View",
+      instruction_text: "Click \"Show Left View\" to highlight the leftmost nodes at each level"
     };
 
     class TreeNode {
@@ -478,180 +316,93 @@
       }
     }
 
-    class BST {
-      constructor() {
-        this.root = null;
-      }
+    let root = null;
+    let leftViewNodes = [];
+    let showingLeftView = false;
 
-      insert(value) {
-        const newNode = new TreeNode(value);
-        if (!this.root) {
-          this.root = newNode;
-          return;
-        }
-
-        let current = this.root;
-        while (true) {
-          if (value < current.value) {
-            if (!current.left) {
-              current.left = newNode;
-              return;
-            }
-            current = current.left;
-          } else if (value > current.value) {
-            if (!current.right) {
-              current.right = newNode;
-              return;
-            }
-            current = current.right;
-          } else {
-            return; // Duplicate value, ignore
-          }
-        }
-      }
+    function createSampleTree() {
+      root = new TreeNode(1);
+      root.left = new TreeNode(2);
+      root.right = new TreeNode(3);
+      root.left.left = new TreeNode(4);
+      root.left.right = new TreeNode(5);
+      root.right.left = new TreeNode(6);
+      root.right.right = new TreeNode(7);
+      root.left.right.left = new TreeNode(8);
+      root.right.right.right = new TreeNode(9);
     }
 
-    let bst = new BST();
-    let isTraversing = false;
-    let traversalTimeout = null;
-    let animationSpeed = 800;
-    let selectedTraversalType = null;
-
-    const traversalInfo = {
-      inorder: {
-        icon: '📚',
-        title: 'Inorder Traversal',
-        order: 'Left → Root → Right',
-        description: 'Inorder traversal visits nodes in ascending order for a BST. It first explores the entire left subtree, then visits the root, and finally explores the right subtree.',
-        use: 'Perfect for getting sorted data from a BST! Also used in expression tree evaluation.',
-        example: `     50
-    /    \\
-   30      70
-  /  \\    /  \\
- 20  40  60  80
-
-Result: 20 → 30 → 40 → 50 → 60 → 70 → 80`
-      },
-      preorder: {
-        icon: '🎯',
-        title: 'Preorder Traversal',
-        order: 'Root → Left → Right',
-        description: 'Preorder traversal visits the root first, then recursively visits the left subtree, followed by the right subtree.',
-        use: 'Used to create a copy of the tree, get prefix expressions, and serialize tree structures.',
-        example: `     50
-    /    \\
-   30      70
-  /  \\    /  \\
- 20  40  60  80
-
-Result: 50 → 30 → 20 → 40 → 70 → 60 → 80`
-      },
-      postorder: {
-        icon: '🎨',
-        title: 'Postorder Traversal',
-        order: 'Left → Right → Root',
-        description: 'Postorder traversal visits both subtrees first (left then right), and visits the root last.',
-        use: 'Used for deleting trees, getting postfix expressions, and calculating directory sizes.',
-        example: `     50
-    /    \\
-   30      70
-  /  \\    /  \\
- 20  40  60  80
-
-Result: 20 → 40 → 30 → 60 → 80 → 70 → 50`
-      },
-      levelorder: {
-        icon: '🌊',
-        title: 'Level Order Traversal',
-        order: 'Level by Level (BFS)',
-        description: 'Level order traversal visits nodes level by level from top to bottom, and left to right within each level. This is also called Breadth-First Search (BFS).',
-        use: 'Used to find shortest paths, level-wise processing, and building complete binary trees.',
-        example: `     50
-    /    \\
-   30      70
-  /  \\    /  \\
- 20  40  60  80
-
-Result: 50 → 30 → 70 → 20 → 40 → 60 → 80`
-      }
-    };
-
-    function showModal(type) {
-      if (!bst.root) {
-        showMessage('Please build a BST first!', 'error');
-        return;
-      }
-
-      if (isTraversing) {
-        return;
-      }
-
-      selectedTraversalType = type;
-      const info = traversalInfo[type];
-
-      document.getElementById('modalIcon').textContent = info.icon;
-      document.getElementById('modalTitle').textContent = info.title;
+    function generateRandomTree() {
+      const nodeCount = Math.floor(Math.random() * 8) + 7;
+      const values = Array.from({length: nodeCount}, (_, i) => i + 1);
       
-      const modalBody = document.getElementById('modalBody');
-      modalBody.innerHTML = `
-        <div class="order-highlight">${info.order}</div>
-        <p><strong>How it works:</strong><br>${info.description}</p>
-        <h3>Common Uses:</h3>
-        <p>${info.use}</p>
-        <h3>Example:</h3>
-        <div class="example-tree">${info.example}</div>
-      `;
+      root = new TreeNode(values[0]);
+      const queue = [root];
+      let index = 1;
 
-      document.getElementById('modalOverlay').style.display = 'flex';
-    }
-
-    function closeModal() {
-      document.getElementById('modalOverlay').style.display = 'none';
-      selectedTraversalType = null;
-    }
-
-    function confirmTraversal() {
-      const type = selectedTraversalType;
-      closeModal();
-      if (type) {
-        setTimeout(() => {
-          executeTraversal(type);
-        }, 100);
+      while (queue.length > 0 && index < values.length) {
+        const node = queue.shift();
+        
+        if (Math.random() > 0.2 && index < values.length) {
+          node.left = new TreeNode(values[index++]);
+          queue.push(node.left);
+        }
+        
+        if (Math.random() > 0.2 && index < values.length) {
+          node.right = new TreeNode(values[index++]);
+          queue.push(node.right);
+        }
       }
+
+      resetView();
+      drawTree();
     }
 
-    function startTraversal(type) {
-      showModal(type);
-    }
-
-    function buildBSTFromInput() {
+    function generateTreeFromInput() {
       const input = document.getElementById('treeInput').value.trim();
       
       if (!input) {
-        showMessage('Please enter values to build the BST!', 'error');
+        showMessage('Please enter tree values!', 'error');
         return;
       }
 
-      const values = input.split(',').map(v => parseInt(v.trim())).filter(v => !isNaN(v));
-      
-      if (values.length === 0) {
-        showMessage('Please enter valid numbers!', 'error');
+      const values = input.split(',').map(v => {
+        const trimmed = v.trim().toLowerCase();
+        return trimmed === 'null' || trimmed === '' ? null : parseInt(trimmed);
+      });
+
+      if (values.length === 0 || values[0] === null) {
+        showMessage('First node cannot be null!', 'error');
         return;
       }
 
-      bst = new BST();
-      values.forEach(val => bst.insert(val));
-      
-      resetTraversalDisplay();
+      root = new TreeNode(values[0]);
+      const queue = [root];
+      let index = 1;
+
+      while (queue.length > 0 && index < values.length) {
+        const node = queue.shift();
+        
+        if (index < values.length) {
+          if (values[index] !== null) {
+            node.left = new TreeNode(values[index]);
+            queue.push(node.left);
+          }
+          index++;
+        }
+        
+        if (index < values.length) {
+          if (values[index] !== null) {
+            node.right = new TreeNode(values[index]);
+            queue.push(node.right);
+          }
+          index++;
+        }
+      }
+
+      resetView();
       drawTree();
-      showMessage('BST built successfully! Now select a traversal method.', 'success');
-    }
-
-    function resetTraversalDisplay() {
-      document.getElementById('inorderSequence').textContent = '—';
-      document.getElementById('preorderSequence').textContent = '—';
-      document.getElementById('postorderSequence').textContent = '—';
-      document.getElementById('levelorderSequence').textContent = '—';
+      showMessage('Tree generated successfully!', 'success');
     }
 
     function showMessage(text, type) {
@@ -665,186 +416,62 @@ Result: 50 → 30 → 70 → 20 → 40 → 60 → 80`
       }
       
       setTimeout(() => {
-        infoBox.textContent = '🎯 Enter comma-separated values to build your BST, then click any traversal method to watch the animation!';
+        infoBox.textContent = 'The left view shows the first node encountered at each level when viewing the tree from the left side.';
         infoBox.style.background = 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)';
       }, 3000);
     }
 
-    async function executeTraversal(type) {
-      if (!bst.root) {
-        showMessage('Please build a BST first!', 'error');
-        return;
+    function calculateLeftView(node, level = 0, levelMap = new Map()) {
+      if (!node) return;
+
+      if (!levelMap.has(level)) {
+        levelMap.set(level, node.value);
       }
 
-      if (isTraversing) {
-        return;
-      }
+      calculateLeftView(node.left, level + 1, levelMap);
+      calculateLeftView(node.right, level + 1, levelMap);
 
-      // Reset tree visualization to default state
+      return Array.from(levelMap.values());
+    }
+
+    function showLeftView() {
+      leftViewNodes = calculateLeftView(root);
+      showingLeftView = true;
       drawTree();
-
-      isTraversing = true;
-      disableButtons(true);
-      animationSpeed = parseInt(document.getElementById('speedSlider').value);
-
-      const sequence = [];
       
-      if (type === 'inorder') {
-        await animateInorder(bst.root, sequence);
-      } else if (type === 'preorder') {
-        await animatePreorder(bst.root, sequence);
-      } else if (type === 'postorder') {
-        await animatePostorder(bst.root, sequence);
-      } else if (type === 'levelorder') {
-        await animateLevelOrder(bst.root, sequence);
-      }
-
-      if (isTraversing) {
-        document.getElementById(`${type}Sequence`).textContent = sequence.join(' → ');
-      }
-      
-      isTraversing = false;
-      disableButtons(false);
+      const infoBox = document.getElementById('infoBox');
+      infoBox.textContent = `Left View: [${leftViewNodes.join(', ')}] - These ${leftViewNodes.length} nodes are visible from the left side!`;
+      infoBox.style.background = 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)';
     }
 
-    function stopTraversal() {
-      if (traversalTimeout) {
-        clearTimeout(traversalTimeout);
-      }
-      isTraversing = false;
-      disableButtons(false);
+    function resetView() {
+      leftViewNodes = [];
+      showingLeftView = false;
       drawTree();
-    }
-
-    function disableButtons(disable) {
-      document.getElementById('inorderBtn').disabled = disable;
-      document.getElementById('preorderBtn').disabled = disable;
-      document.getElementById('postorderBtn').disabled = disable;
-      document.getElementById('levelorderBtn').disabled = disable;
-    }
-
-    async function animateInorder(node, sequence) {
-      if (!node || !isTraversing) return;
-
-      if (node.left) await animateInorder(node.left, sequence);
       
-      if (isTraversing) {
-        await highlightNode(node.value);
-        sequence.push(node.value);
-      }
-      
-      if (node.right) await animateInorder(node.right, sequence);
-    }
-
-    async function animatePreorder(node, sequence) {
-      if (!node || !isTraversing) return;
-
-      await highlightNode(node.value);
-      sequence.push(node.value);
-      
-      if (node.left) await animatePreorder(node.left, sequence);
-      if (node.right) await animatePreorder(node.right, sequence);
-    }
-
-    async function animatePostorder(node, sequence) {
-      if (!node || !isTraversing) return;
-
-      if (node.left) await animatePostorder(node.left, sequence);
-      if (node.right) await animatePostorder(node.right, sequence);
-      
-      if (isTraversing) {
-        await highlightNode(node.value);
-        sequence.push(node.value);
-      }
-    }
-
-    async function animateLevelOrder(root, sequence) {
-      if (!root || !isTraversing) return;
-
-      const queue = [root];
-      
-      while (queue.length > 0 && isTraversing) {
-        const node = queue.shift();
-        
-        await highlightNode(node.value);
-        sequence.push(node.value);
-        
-        if (node.left) queue.push(node.left);
-        if (node.right) queue.push(node.right);
-      }
-    }
-
-    function highlightNode(value) {
-      return new Promise(resolve => {
-        const circle = document.getElementById(`node-${value}`);
-        if (circle) {
-          circle.style.fill = '#fbbf24';
-          circle.classList.add('visiting-node');
-          
-          traversalTimeout = setTimeout(() => {
-            circle.style.fill = 'url(#grad-visited)';
-            circle.classList.remove('visiting-node');
-            resolve();
-          }, animationSpeed);
-        } else {
-          resolve();
-        }
-      });
+      const config = window.elementSdk?.config || defaultConfig;
+      const infoBox = document.getElementById('infoBox');
+      infoBox.textContent = 'The left view shows the first node encountered at each level when viewing the tree from the left side.';
+      infoBox.style.background = 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)';
     }
 
     function drawTree() {
       const svg = document.getElementById('treeSvg');
       svg.innerHTML = '';
 
-      if (!bst.root) return;
+      if (!root) return;
 
-      const width = 700;
+      const width = 800;
       const height = 500;
-      const nodeRadius = 24;
+      const nodeRadius = 28;
       
-      // Create gradients
-      const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-      
-      const gradDefault = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
-      gradDefault.setAttribute('id', 'grad-default');
-      gradDefault.setAttribute('x1', '0%');
-      gradDefault.setAttribute('y1', '0%');
-      gradDefault.setAttribute('x2', '100%');
-      gradDefault.setAttribute('y2', '100%');
-      
-      const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-      stop1.setAttribute('offset', '0%');
-      stop1.setAttribute('stop-color', '#667eea');
-      gradDefault.appendChild(stop1);
-      
-      const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-      stop2.setAttribute('offset', '100%');
-      stop2.setAttribute('stop-color', '#764ba2');
-      gradDefault.appendChild(stop2);
-      
-      defs.appendChild(gradDefault);
-
-      const gradVisited = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
-      gradVisited.setAttribute('id', 'grad-visited');
-      gradVisited.setAttribute('x1', '0%');
-      gradVisited.setAttribute('y1', '0%');
-      gradVisited.setAttribute('x2', '100%');
-      gradVisited.setAttribute('y2', '100%');
-      
-      const stop3 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-      stop3.setAttribute('offset', '0%');
-      stop3.setAttribute('stop-color', '#10b981');
-      gradVisited.appendChild(stop3);
-      
-      const stop4 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-      stop4.setAttribute('offset', '100%');
-      stop4.setAttribute('stop-color', '#059669');
-      gradVisited.appendChild(stop4);
-      
-      defs.appendChild(gradVisited);
-      svg.appendChild(defs);
-
+      const levels = calculateTreeLevels(root);
       const positions = new Map();
+
+      function calculateTreeLevels(node) {
+        if (!node) return 0;
+        return 1 + Math.max(calculateTreeLevels(node.left), calculateTreeLevels(node.right));
+      }
 
       function calculatePositions(node, x, y, level, horizontalSpacing) {
         if (!node) return;
@@ -853,14 +480,14 @@ Result: 50 → 30 → 70 → 20 → 40 → 60 → 80`
 
         const spacing = horizontalSpacing / 2;
         if (node.left) {
-          calculatePositions(node.left, x - spacing, y + 80, level + 1, spacing);
+          calculatePositions(node.left, x - spacing, y + 90, level + 1, spacing);
         }
         if (node.right) {
-          calculatePositions(node.right, x + spacing, y + 80, level + 1, spacing);
+          calculatePositions(node.right, x + spacing, y + 90, level + 1, spacing);
         }
       }
 
-      calculatePositions(bst.root, width / 2, 50, 0, width / 4);
+      calculatePositions(root, width / 2, 50, 0, width / 4);
 
       function drawEdges(node) {
         if (!node) return;
@@ -869,11 +496,8 @@ Result: 50 → 30 → 70 → 20 → 40 → 60 → 80`
         
         if (node.left) {
           const leftPos = positions.get(node.left.value);
-          const edge = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-          edge.setAttribute('x1', pos.x);
-          edge.setAttribute('y1', pos.y);
-          edge.setAttribute('x2', leftPos.x);
-          edge.setAttribute('y2', leftPos.y);
+          const edge = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          edge.setAttribute('d', `M ${pos.x} ${pos.y + nodeRadius} Q ${(pos.x + leftPos.x) / 2} ${(pos.y + leftPos.y) / 2} ${leftPos.x} ${leftPos.y - nodeRadius}`);
           edge.setAttribute('class', 'edge');
           svg.appendChild(edge);
           drawEdges(node.left);
@@ -881,36 +505,62 @@ Result: 50 → 30 → 70 → 20 → 40 → 60 → 80`
 
         if (node.right) {
           const rightPos = positions.get(node.right.value);
-          const edge = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-          edge.setAttribute('x1', pos.x);
-          edge.setAttribute('y1', pos.y);
-          edge.setAttribute('x2', rightPos.x);
-          edge.setAttribute('y2', rightPos.y);
+          const edge = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          edge.setAttribute('d', `M ${pos.x} ${pos.y + nodeRadius} Q ${(pos.x + rightPos.x) / 2} ${(pos.y + rightPos.y) / 2} ${rightPos.x} ${rightPos.y - nodeRadius}`);
           edge.setAttribute('class', 'edge');
           svg.appendChild(edge);
           drawEdges(node.right);
         }
       }
 
-      drawEdges(bst.root);
+      drawEdges(root);
+
+      const colors = [
+        'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
+      ];
 
       positions.forEach((pos, value) => {
+        const isLeftView = leftViewNodes.includes(value);
+        
         const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         
+        const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+        const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+        gradient.setAttribute('id', `grad-${value}`);
+        gradient.setAttribute('x1', '0%');
+        gradient.setAttribute('y1', '0%');
+        gradient.setAttribute('x2', '100%');
+        gradient.setAttribute('y2', '100%');
+
+        const color = isLeftView ? 1 : 0;
+        const colorStops = color === 0 ? 
+          [{offset: '0%', color: '#667eea'}, {offset: '100%', color: '#764ba2'}] :
+          [{offset: '0%', color: '#f093fb'}, {offset: '100%', color: '#f5576c'}];
+
+        colorStops.forEach(stop => {
+          const stopEl = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+          stopEl.setAttribute('offset', stop.offset);
+          stopEl.setAttribute('stop-color', stop.color);
+          gradient.appendChild(stopEl);
+        });
+
+        defs.appendChild(gradient);
+        svg.appendChild(defs);
+
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        circle.setAttribute('id', `node-${value}`);
         circle.setAttribute('cx', pos.x);
         circle.setAttribute('cy', pos.y);
         circle.setAttribute('r', nodeRadius);
-        circle.setAttribute('fill', 'url(#grad-default)');
-        circle.setAttribute('class', 'node-circle');
+        circle.setAttribute('fill', `url(#grad-${value})`);
+        circle.setAttribute('class', isLeftView ? 'node-circle left-view-node' : 'node-circle');
         circle.setAttribute('stroke', 'white');
         circle.setAttribute('stroke-width', '3');
         g.appendChild(circle);
 
         const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         text.setAttribute('x', pos.x);
-        text.setAttribute('y', pos.y + 5);
+        text.setAttribute('y', pos.y + 6);
         text.setAttribute('text-anchor', 'middle');
         text.setAttribute('fill', 'white');
         text.setAttribute('class', 'node-text');
@@ -921,17 +571,12 @@ Result: 50 → 30 → 70 → 20 → 40 → 60 → 80`
       });
     }
 
-    // Speed slider update
-    document.getElementById('speedSlider').addEventListener('input', (e) => {
-      animationSpeed = parseInt(e.target.value);
-    });
-
     async function onConfigChange(config) {
-      const titleElement = document.getElementById('main-title');
-      const subtitleElement = document.getElementById('subtitle');
+      const titleElement = document.getElementById('tree-title');
+      const instructionElement = document.getElementById('instruction-text');
       
-      titleElement.textContent = config.main_title || defaultConfig.main_title;
-      subtitleElement.textContent = config.subtitle || defaultConfig.subtitle;
+      titleElement.textContent = config.tree_title || defaultConfig.tree_title;
+      instructionElement.textContent = config.instruction_text || defaultConfig.instruction_text;
     }
 
     if (window.elementSdk) {
@@ -945,15 +590,14 @@ Result: 50 → 30 → 70 → 20 → 40 → 60 → 80`
           fontSizeable: undefined
         }),
         mapToEditPanelValues: (config) => new Map([
-          ["main_title", config.main_title || defaultConfig.main_title],
-          ["subtitle", config.subtitle || defaultConfig.subtitle]
+          ["tree_title", config.tree_title || defaultConfig.tree_title],
+          ["instruction_text", config.instruction_text || defaultConfig.instruction_text]
         ])
       });
     }
 
-    // Create default BST
-    [50, 30, 70, 20, 40, 60, 80, 10, 25, 35, 45].forEach(val => bst.insert(val));
+    createSampleTree();
     drawTree();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b25b574a07b6091',t:'MTc2NjQ3MDM2Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b25a35cc0036091',t:'MTc2NjQ2OTYyMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
