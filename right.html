@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Binary Tree Right View</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+    }
+
+    .app-wrapper {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 24px;
+      overflow: auto;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      position: relative;
+    }
+
+    .app-wrapper::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        url("data:image/svg+xml,%3Csvg width='200' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.15'%3E%3Ccircle cx='100' cy='50' r='8' fill='%23fff'/%3E%3Cline x1='100' y1='58' x2='80' y2='90' stroke='%23fff' stroke-width='3'/%3E%3Cline x1='100' y1='58' x2='120' y2='90' stroke='%23fff' stroke-width='3'/%3E%3Ccircle cx='80' cy='90' r='6' fill='%23fff'/%3E%3Ccircle cx='120' cy='90' r='6' fill='%23fff'/%3E%3Cline x1='80' y1='96' x2='65' y2='120' stroke='%23fff' stroke-width='2'/%3E%3Cline x1='80' y1='96' x2='95' y2='120' stroke='%23fff' stroke-width='2'/%3E%3Cline x1='120' y1='96' x2='105' y2='120' stroke='%23fff' stroke-width='2'/%3E%3Cline x1='120' y1='96' x2='135' y2='120' stroke='%23fff' stroke-width='2'/%3E%3Ccircle cx='65' cy='120' r='4' fill='%23fff'/%3E%3Ccircle cx='95' cy='120' r='4' fill='%23fff'/%3E%3Ccircle cx='105' cy='120' r='4' fill='%23fff'/%3E%3Ccircle cx='135' cy='120' r='4' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg width='150' height='250' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.1'%3E%3Ccircle cx='75' cy='40' r='10' fill='%23fff'/%3E%3Cline x1='75' y1='50' x2='50' y2='90' stroke='%23fff' stroke-width='4'/%3E%3Cline x1='75' y1='50' x2='100' y2='90' stroke='%23fff' stroke-width='4'/%3E%3Ccircle cx='50' cy='90' r='7' fill='%23fff'/%3E%3Ccircle cx='100' cy='90' r='7' fill='%23fff'/%3E%3Cline x1='50' y1='97' x2='35' y2='125' stroke='%23fff' stroke-width='3'/%3E%3Cline x1='50' y1='97' x2='65' y2='125' stroke='%23fff' stroke-width='3'/%3E%3Ccircle cx='35' cy='125' r='5' fill='%23fff'/%3E%3Ccircle cx='65' cy='125' r='5' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg width='160' height='220' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.13'%3E%3Ccircle cx='80' cy='35' r='7' fill='%23fff'/%3E%3Cline x1='80' y1='42' x2='65' y2='70' stroke='%23fff' stroke-width='3'/%3E%3Cline x1='80' y1='42' x2='95' y2='70' stroke='%23fff' stroke-width='3'/%3E%3Ccircle cx='65' cy='70' r='5' fill='%23fff'/%3E%3Ccircle cx='95' cy='70' r='5' fill='%23fff'/%3E%3Cline x1='65' y1='75' x2='55' y2='95' stroke='%23fff' stroke-width='2'/%3E%3Cline x1='95' y1='75' x2='105' y2='95' stroke='%23fff' stroke-width='2'/%3E%3Ccircle cx='55' cy='95' r='4' fill='%23fff'/%3E%3Ccircle cx='105' cy='95' r='4' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg width='140' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.11'%3E%3Ccircle cx='70' cy='30' r='6' fill='%23fff'/%3E%3Cline x1='70' y1='36' x2='55' y2='60' stroke='%23fff' stroke-width='2.5'/%3E%3Cline x1='70' y1='36' x2='85' y2='60' stroke='%23fff' stroke-width='2.5'/%3E%3Ccircle cx='55' cy='60' r='5' fill='%23fff'/%3E%3Ccircle cx='85' cy='60' r='5' fill='%23fff'/%3E%3Cline x1='55' y1='65' x2='45' y2='85' stroke='%23fff' stroke-width='2'/%3E%3Cline x1='55' y1='65' x2='65' y2='85' stroke='%23fff' stroke-width='2'/%3E%3Ccircle cx='45' cy='85' r='3.5' fill='%23fff'/%3E%3Ccircle cx='65' cy='85' r='3.5' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E");
+      background-position: 5% 15%, 90% 55%, 15% 75%, 75% 25%;
+      background-repeat: no-repeat;
+      background-size: 250px, 200px, 180px, 160px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .app-wrapper::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        url("data:image/svg+xml,%3Csvg width='180' height='280' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.12'%3E%3Ccircle cx='90' cy='45' r='9' fill='%23fff'/%3E%3Cline x1='90' y1='54' x2='70' y2='85' stroke='%23fff' stroke-width='3.5'/%3E%3Cline x1='90' y1='54' x2='110' y2='85' stroke='%23fff' stroke-width='3.5'/%3E%3Ccircle cx='70' cy='85' r='6.5' fill='%23fff'/%3E%3Ccircle cx='110' cy='85' r='6.5' fill='%23fff'/%3E%3Cline x1='70' y1='91.5' x2='55' y2='115' stroke='%23fff' stroke-width='2.5'/%3E%3Cline x1='70' y1='91.5' x2='85' y2='115' stroke='%23fff' stroke-width='2.5'/%3E%3Ccircle cx='55' cy='115' r='4.5' fill='%23fff'/%3E%3Ccircle cx='85' cy='115' r='4.5' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg width='170' height='240' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.14'%3E%3Ccircle cx='85' cy='40' r='8' fill='%23fff'/%3E%3Cline x1='85' y1='48' x2='68' y2='75' stroke='%23fff' stroke-width='3'/%3E%3Cline x1='85' y1='48' x2='102' y2='75' stroke='%23fff' stroke-width='3'/%3E%3Ccircle cx='68' cy='75' r='6' fill='%23fff'/%3E%3Ccircle cx='102' cy='75' r='6' fill='%23fff'/%3E%3Cline x1='68' y1='81' x2='58' y2='100' stroke='%23fff' stroke-width='2.5'/%3E%3Cline x1='68' y1='81' x2='78' y2='100' stroke='%23fff' stroke-width='2.5'/%3E%3Ccircle cx='58' cy='100' r='4' fill='%23fff'/%3E%3Ccircle cx='78' cy='100' r='4' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg width='130' height='190' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.1'%3E%3Ccircle cx='65' cy='28' r='7' fill='%23fff'/%3E%3Cline x1='65' y1='35' x2='50' y2='58' stroke='%23fff' stroke-width='2.5'/%3E%3Cline x1='65' y1='35' x2='80' y2='58' stroke='%23fff' stroke-width='2.5'/%3E%3Ccircle cx='50' cy='58' r='5' fill='%23fff'/%3E%3Ccircle cx='80' cy='58' r='5' fill='%23fff'/%3E%3Cline x1='50' y1='63' x2='42' y2='80' stroke='%23fff' stroke-width='2'/%3E%3Cline x1='80' y1='63' x2='88' y2='80' stroke='%23fff' stroke-width='2'/%3E%3Ccircle cx='42' cy='80' r='3.5' fill='%23fff'/%3E%3Ccircle cx='88' cy='80' r='3.5' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E");
+      background-position: 50% 65%, 25% 40%, 82% 80%;
+      background-repeat: no-repeat;
+      background-size: 220px, 200px, 150px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .header, .controls, .tree-container, .legend, .info-box, .app-wrapper > div {
+      position: relative;
+      z-index: 1;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+      color: #ffffff;
+    }
+
+    .header h1 {
+      font-size: 42px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .header p {
+      font-size: 18px;
+      opacity: 0.95;
+    }
+
+    .controls {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 20px 32px;
+      margin-bottom: 32px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .controls button {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 24px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+    }
+
+    .controls button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(240, 147, 251, 0.6);
+    }
+
+    .controls button:active {
+      transform: translateY(0);
+    }
+
+    .tree-input {
+      padding: 12px 20px;
+      border-radius: 24px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      font-size: 16px;
+      min-width: 350px;
+      background: rgba(255, 255, 255, 0.95);
+      color: #2d3436;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .tree-input:focus {
+      outline: none;
+      border-color: #f093fb;
+      box-shadow: 0 0 20px rgba(240, 147, 251, 0.5);
+    }
+
+    .tree-input::placeholder {
+      color: #95a5a6;
+    }
+
+    .tree-container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      min-width: 800px;
+      position: relative;
+    }
+
+    .tree-container::before {
+      content: '';
+      position: absolute;
+      left: -120px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100px;
+      height: 180px;
+      background-image: url("data:image/svg+xml,%3Csvg width='100' height='180' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.3'%3E%3Ccircle cx='50' cy='30' r='8' fill='%23667eea'/%3E%3Cline x1='50' y1='38' x2='35' y2='60' stroke='%23667eea' stroke-width='3'/%3E%3Cline x1='50' y1='38' x2='65' y2='60' stroke='%23667eea' stroke-width='3'/%3E%3Ccircle cx='35' cy='60' r='6' fill='%23764ba2'/%3E%3Ccircle cx='65' cy='60' r='6' fill='%23764ba2'/%3E%3Cline x1='35' y1='66' x2='25' y2='85' stroke='%23667eea' stroke-width='2.5'/%3E%3Cline x1='35' y1='66' x2='45' y2='85' stroke='%23667eea' stroke-width='2.5'/%3E%3Cline x1='65' y1='66' x2='55' y2='85' stroke='%23667eea' stroke-width='2.5'/%3E%3Cline x1='65' y1='66' x2='75' y2='85' stroke='%23667eea' stroke-width='2.5'/%3E%3Ccircle cx='25' cy='85' r='4' fill='%23764ba2'/%3E%3Ccircle cx='45' cy='85' r='4' fill='%23764ba2'/%3E%3Ccircle cx='55' cy='85' r='4' fill='%23764ba2'/%3E%3Ccircle cx='75' cy='85' r='4' fill='%23764ba2'/%3E%3C/g%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      pointer-events: none;
+    }
+
+    .tree-container::after {
+      content: '';
+      position: absolute;
+      right: -120px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100px;
+      height: 180px;
+      background-image: url("data:image/svg+xml,%3Csvg width='100' height='180' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.3'%3E%3Ccircle cx='50' cy='30' r='8' fill='%23f093fb'/%3E%3Cline x1='50' y1='38' x2='35' y2='60' stroke='%23f093fb' stroke-width='3'/%3E%3Cline x1='50' y1='38' x2='65' y2='60' stroke='%23f093fb' stroke-width='3'/%3E%3Ccircle cx='35' cy='60' r='6' fill='%23f5576c'/%3E%3Ccircle cx='65' cy='60' r='6' fill='%23f5576c'/%3E%3Cline x1='35' y1='66' x2='25' y2='85' stroke='%23f093fb' stroke-width='2.5'/%3E%3Cline x1='35' y1='66' x2='45' y2='85' stroke='%23f093fb' stroke-width='2.5'/%3E%3Cline x1='65' y1='66' x2='55' y2='85' stroke='%23f093fb' stroke-width='2.5'/%3E%3Cline x1='65' y1='66' x2='75' y2='85' stroke='%23f093fb' stroke-width='2.5'/%3E%3Ccircle cx='25' cy='85' r='4' fill='%23f5576c'/%3E%3Ccircle cx='45' cy='85' r='4' fill='%23f5576c'/%3E%3Ccircle cx='55' cy='85' r='4' fill='%23f5576c'/%3E%3Ccircle cx='75' cy='85' r='4' fill='%23f5576c'/%3E%3C/g%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      pointer-events: none;
+    }
+
+    .tree-svg {
+      width: 100%;
+      height: 500px;
+    }
+
+    .node-circle {
+      transition: all 0.4s ease;
+      cursor: pointer;
+    }
+
+    .node-circle:hover {
+      filter: brightness(1.1);
+    }
+
+    .node-text {
+      font-size: 18px;
+      font-weight: 700;
+      pointer-events: none;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .edge {
+      stroke: #cbd5e0;
+      stroke-width: 3;
+      fill: none;
+      transition: all 0.3s ease;
+    }
+
+    .right-view-node {
+      filter: drop-shadow(0 0 15px rgba(240, 147, 251, 0.8));
+    }
+
+    .legend {
+      margin-top: 24px;
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      padding: 10px 20px;
+      border-radius: 20px;
+      color: white;
+      font-weight: 600;
+    }
+
+    .legend-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 3px solid white;
+    }
+
+    .info-box {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      border-radius: 16px;
+      padding: 20px;
+      margin-top: 24px;
+      color: #2d3436;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 8px 20px rgba(168, 237, 234, 0.3);
+    }
+
+    @media (max-width: 1024px) {
+      .tree-container {
+        min-width: auto;
+        width: 100%;
+      }
+
+      .tree-container::before,
+      .tree-container::after {
+        display: none;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="app-wrapper">
+   <div class="header">
+    <h1 id="tree-title">Binary Tree Right View</h1>
+    <p id="instruction-text">Click "Show Right View" to highlight the rightmost nodes at each level</p>
+   </div>
+   <div class="controls"><button onclick="showRightView()">Show Right View</button> <input type="text" id="treeInput" class="tree-input" placeholder="e.g., 1,2,3,null,5,6,7"> <button onclick="generateTreeFromInput()">Generate Tree</button> <button onclick="resetView()">Reset View</button>
+   </div>
+   <div class="tree-container">
+    <svg class="tree-svg" id="treeSvg"></svg>
+   </div>
+   <div class="legend">
+    <div class="legend-item">
+     <div class="legend-circle" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div><span>Regular Node</span>
+    </div>
+    <div class="legend-item">
+     <div class="legend-circle" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div><span>Right View Node</span>
+    </div>
+   </div>
+   <div class="info-box" id="infoBox">
+    The right view shows the last node encountered at each level when viewing the tree from the right side.
+   </div>
+   <div style="margin-top: 16px; padding: 16px 24px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border-radius: 16px; color: white; max-width: 800px;">
+    <h3 style="margin-bottom: 12px; font-size: 18px;">💡 How to Create Your Own Tree:</h3>
+    <p style="margin-bottom: 8px; line-height: 1.6;"><strong>Format:</strong> Enter values separated by commas, level by level from left to right.</p>
+    <p style="margin-bottom: 8px; line-height: 1.6;"><strong>Use "null"</strong> for empty nodes.</p>
+    <p style="line-height: 1.6;"><strong>Example:</strong> <code style="background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px;">1,2,3,4,5,null,6</code> creates a tree with root 1, children 2 and 3, and so on.</p>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      tree_title: "Binary Tree Right View",
+      instruction_text: "Click \"Show Right View\" to highlight the rightmost nodes at each level"
+    };
+
+    class TreeNode {
+      constructor(value) {
+        this.value = value;
+        this.left = null;
+        this.right = null;
+      }
+    }
+
+    let root = null;
+    let rightViewNodes = [];
+    let showingRightView = false;
+
+    function createSampleTree() {
+      root = new TreeNode(1);
+      root.left = new TreeNode(2);
+      root.right = new TreeNode(3);
+      root.left.left = new TreeNode(4);
+      root.left.right = new TreeNode(5);
+      root.right.left = new TreeNode(6);
+      root.right.right = new TreeNode(7);
+      root.left.right.left = new TreeNode(8);
+      root.right.right.right = new TreeNode(9);
+    }
+
+    function generateTreeFromInput() {
+      const input = document.getElementById('treeInput').value.trim();
+      
+      if (!input) {
+        showMessage('Please enter tree values!', 'error');
+        return;
+      }
+
+      const values = input.split(',').map(v => {
+        const trimmed = v.trim().toLowerCase();
+        return trimmed === 'null' || trimmed === '' ? null : parseInt(trimmed);
+      });
+
+      if (values.length === 0 || values[0] === null) {
+        showMessage('First node cannot be null!', 'error');
+        return;
+      }
+
+      root = new TreeNode(values[0]);
+      const queue = [root];
+      let index = 1;
+
+      while (queue.length > 0 && index < values.length) {
+        const node = queue.shift();
+        
+        if (index < values.length) {
+          if (values[index] !== null) {
+            node.left = new TreeNode(values[index]);
+            queue.push(node.left);
+          }
+          index++;
+        }
+        
+        if (index < values.length) {
+          if (values[index] !== null) {
+            node.right = new TreeNode(values[index]);
+            queue.push(node.right);
+          }
+          index++;
+        }
+      }
+
+      resetView();
+      drawTree();
+      showMessage('Tree generated successfully!', 'success');
+    }
+
+    function showMessage(text, type) {
+      const infoBox = document.getElementById('infoBox');
+      infoBox.textContent = text;
+      
+      if (type === 'success') {
+        infoBox.style.background = 'linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)';
+      } else if (type === 'error') {
+        infoBox.style.background = 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)';
+      }
+      
+      setTimeout(() => {
+        infoBox.textContent = 'The right view shows the last node encountered at each level when viewing the tree from the right side.';
+        infoBox.style.background = 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)';
+      }, 3000);
+    }
+
+    function calculateRightView(node, level = 0, levelMap = new Map()) {
+      if (!node) return;
+
+      levelMap.set(level, node.value);
+
+      calculateRightView(node.left, level + 1, levelMap);
+      calculateRightView(node.right, level + 1, levelMap);
+
+      return Array.from(levelMap.values());
+    }
+
+    function showRightView() {
+      rightViewNodes = calculateRightView(root);
+      showingRightView = true;
+      drawTree();
+      
+      const infoBox = document.getElementById('infoBox');
+      infoBox.textContent = `Right View: [${rightViewNodes.join(', ')}] - These ${rightViewNodes.length} nodes are visible from the right side!`;
+      infoBox.style.background = 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)';
+    }
+
+    function resetView() {
+      rightViewNodes = [];
+      showingRightView = false;
+      drawTree();
+      
+      const infoBox = document.getElementById('infoBox');
+      infoBox.textContent = 'The right view shows the last node encountered at each level when viewing the tree from the right side.';
+      infoBox.style.background = 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)';
+    }
+
+    function drawTree() {
+      const svg = document.getElementById('treeSvg');
+      svg.innerHTML = '';
+
+      if (!root) return;
+
+      const width = 800;
+      const height = 500;
+      const nodeRadius = 28;
+      
+      const positions = new Map();
+
+      function calculateTreeLevels(node) {
+        if (!node) return 0;
+        return 1 + Math.max(calculateTreeLevels(node.left), calculateTreeLevels(node.right));
+      }
+
+      function calculatePositions(node, x, y, level, horizontalSpacing) {
+        if (!node) return;
+
+        positions.set(node.value, {x, y, level});
+
+        const spacing = horizontalSpacing / 2;
+        if (node.left) {
+          calculatePositions(node.left, x - spacing, y + 90, level + 1, spacing);
+        }
+        if (node.right) {
+          calculatePositions(node.right, x + spacing, y + 90, level + 1, spacing);
+        }
+      }
+
+      calculatePositions(root, width / 2, 50, 0, width / 4);
+
+      function drawEdges(node) {
+        if (!node) return;
+
+        const pos = positions.get(node.value);
+        
+        if (node.left) {
+          const leftPos = positions.get(node.left.value);
+          const edge = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          edge.setAttribute('d', `M ${pos.x} ${pos.y + nodeRadius} Q ${(pos.x + leftPos.x) / 2} ${(pos.y + leftPos.y) / 2} ${leftPos.x} ${leftPos.y - nodeRadius}`);
+          edge.setAttribute('class', 'edge');
+          svg.appendChild(edge);
+          drawEdges(node.left);
+        }
+
+        if (node.right) {
+          const rightPos = positions.get(node.right.value);
+          const edge = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          edge.setAttribute('d', `M ${pos.x} ${pos.y + nodeRadius} Q ${(pos.x + rightPos.x) / 2} ${(pos.y + rightPos.y) / 2} ${rightPos.x} ${rightPos.y - nodeRadius}`);
+          edge.setAttribute('class', 'edge');
+          svg.appendChild(edge);
+          drawEdges(node.right);
+        }
+      }
+
+      drawEdges(root);
+
+      positions.forEach((pos, value) => {
+        const isRightView = rightViewNodes.includes(value);
+        
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        
+        const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+        const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+        gradient.setAttribute('id', `grad-${value}`);
+        gradient.setAttribute('x1', '0%');
+        gradient.setAttribute('y1', '0%');
+        gradient.setAttribute('x2', '100%');
+        gradient.setAttribute('y2', '100%');
+
+        const colorStops = isRightView ? 
+          [{offset: '0%', color: '#f093fb'}, {offset: '100%', color: '#f5576c'}] :
+          [{offset: '0%', color: '#667eea'}, {offset: '100%', color: '#764ba2'}];
+
+        colorStops.forEach(stop => {
+          const stopEl = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+          stopEl.setAttribute('offset', stop.offset);
+          stopEl.setAttribute('stop-color', stop.color);
+          gradient.appendChild(stopEl);
+        });
+
+        defs.appendChild(gradient);
+        svg.appendChild(defs);
+
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', pos.x);
+        circle.setAttribute('cy', pos.y);
+        circle.setAttribute('r', nodeRadius);
+        circle.setAttribute('fill', `url(#grad-${value})`);
+        circle.setAttribute('class', isRightView ? 'node-circle right-view-node' : 'node-circle');
+        circle.setAttribute('stroke', 'white');
+        circle.setAttribute('stroke-width', '3');
+        g.appendChild(circle);
+
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', pos.x);
+        text.setAttribute('y', pos.y + 6);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('fill', 'white');
+        text.setAttribute('class', 'node-text');
+        text.textContent = value;
+        g.appendChild(text);
+
+        svg.appendChild(g);
+      });
+    }
+
+    async function onConfigChange(config) {
+      const titleElement = document.getElementById('tree-title');
+      const instructionElement = document.getElementById('instruction-text');
+      
+      titleElement.textContent = config.tree_title || defaultConfig.tree_title;
+      instructionElement.textContent = config.instruction_text || defaultConfig.instruction_text;
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig: defaultConfig,
+        onConfigChange: onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ["tree_title", config.tree_title || defaultConfig.tree_title],
+          ["instruction_text", config.instruction_text || defaultConfig.instruction_text]
+        ])
+      });
+    }
+
+    createSampleTree();
+    drawTree();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b25a7f2b3bd6091',t:'MTc2NjQ2OTgwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
