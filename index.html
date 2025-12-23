@@ -1,0 +1,959 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BST Traversal Visualizer</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+    }
+
+    .app-wrapper {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e22ce 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px;
+      overflow: auto;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      position: relative;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #ffffff;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header h1 {
+      font-size: 38px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .header p {
+      font-size: 16px;
+      opacity: 0.95;
+    }
+
+    .controls {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 20px 28px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .controls button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 24px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .controls button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+
+    .controls button:active {
+      transform: translateY(0);
+    }
+
+    .controls button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .tree-input {
+      padding: 12px 20px;
+      border-radius: 24px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      font-size: 15px;
+      min-width: 300px;
+      background: rgba(255, 255, 255, 0.95);
+      color: #2d3436;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .tree-input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+    }
+
+    .tree-input::placeholder {
+      color: #95a5a6;
+    }
+
+    .main-content {
+      display: flex;
+      gap: 20px;
+      width: 100%;
+      max-width: 1400px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tree-container {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      min-height: 500px;
+    }
+
+    .tree-svg {
+      width: 100%;
+      height: 500px;
+    }
+
+    .node-circle {
+      transition: all 0.4s ease;
+      cursor: pointer;
+    }
+
+    .node-circle:hover {
+      filter: brightness(1.1);
+    }
+
+    .node-text {
+      font-size: 16px;
+      font-weight: 700;
+      pointer-events: none;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .edge {
+      stroke: #cbd5e0;
+      stroke-width: 3;
+      fill: none;
+      transition: all 0.3s ease;
+    }
+
+    .visiting-node {
+      animation: pulse 0.6s ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { 
+        transform: scale(1);
+        filter: drop-shadow(0 0 8px rgba(250, 204, 21, 0.8));
+      }
+      50% { 
+        transform: scale(1.15);
+        filter: drop-shadow(0 0 20px rgba(250, 204, 21, 1));
+      }
+    }
+
+    .traversal-panel {
+      width: 320px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-height: 560px;
+      overflow-y: auto;
+    }
+
+    .traversal-panel h3 {
+      color: #2d3436;
+      font-size: 20px;
+      margin-bottom: 16px;
+      text-align: center;
+      border-bottom: 3px solid #667eea;
+      padding-bottom: 10px;
+    }
+
+    .traversal-method {
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      padding: 14px;
+      border-radius: 12px;
+      border-left: 4px solid #667eea;
+    }
+
+    .traversal-method h4 {
+      color: #667eea;
+      font-size: 15px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .traversal-sequence {
+      color: #2d3436;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.6;
+      word-wrap: break-word;
+    }
+
+    .info-box {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      border-radius: 16px;
+      padding: 18px;
+      margin-top: 20px;
+      color: #2d3436;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 8px 20px rgba(168, 237, 234, 0.3);
+      max-width: 1400px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+
+    .speed-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 8px 16px;
+      border-radius: 20px;
+    }
+
+    .speed-control label {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .speed-control input[type="range"] {
+      width: 100px;
+      cursor: pointer;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 20px;
+      padding: 32px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      animation: slideUp 0.3s ease;
+      position: relative;
+    }
+
+    @keyframes slideUp {
+      from { 
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to { 
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 3px solid #667eea;
+    }
+
+    .modal-icon {
+      font-size: 32px;
+    }
+
+    .modal-header h2 {
+      color: #667eea;
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .modal-body {
+      color: #2d3436;
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+
+    .modal-body h3 {
+      color: #667eea;
+      font-size: 18px;
+      margin-top: 16px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .modal-body p {
+      margin-bottom: 12px;
+      font-size: 15px;
+    }
+
+    .modal-body .order-highlight {
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 700;
+      display: inline-block;
+      margin: 8px 0;
+    }
+
+    .modal-body .example-tree {
+      background: #f8f9fa;
+      padding: 16px;
+      border-radius: 12px;
+      margin: 12px 0;
+      text-align: center;
+      font-family: monospace;
+      font-size: 14px;
+      line-height: 2;
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .modal-button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 24px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .modal-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+
+    .modal-button.cancel {
+      background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+    }
+
+    @media (max-width: 1024px) {
+      .main-content {
+        flex-direction: column;
+      }
+
+      .traversal-panel {
+        width: 100%;
+        max-height: none;
+      }
+
+      .modal-content {
+        padding: 24px;
+        max-width: 90%;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="app-wrapper">
+   <div class="header">
+    <h1 id="main-title">Binary Search Tree Traversals</h1>
+    <p id="subtitle">Watch nodes light up in traversal order! ✨</p>
+   </div>
+   <div class="controls"><input type="text" id="treeInput" class="tree-input" placeholder="Enter values: e.g., 50,30,70,20,40,60,80"> <button onclick="buildBSTFromInput()">Build BST</button> <button id="inorderBtn" onclick="startTraversal('inorder')">Inorder</button> <button id="preorderBtn" onclick="startTraversal('preorder')">Preorder</button> <button id="postorderBtn" onclick="startTraversal('postorder')">Postorder</button> <button id="levelorderBtn" onclick="startTraversal('levelorder')">Level Order</button> <button onclick="stopTraversal()">Stop</button>
+    <div class="speed-control"><label for="speedSlider">Speed:</label> <input type="range" id="speedSlider" min="200" max="2000" value="800" step="200">
+    </div>
+   </div>
+   <div class="main-content">
+    <div class="tree-container">
+     <svg class="tree-svg" id="treeSvg"></svg>
+    </div>
+    <div class="traversal-panel">
+     <h3>📊 Traversal Results</h3>
+     <div class="traversal-method">
+      <h4>Inorder (Left-Root-Right)</h4>
+      <div class="traversal-sequence" id="inorderSequence">
+       —
+      </div>
+     </div>
+     <div class="traversal-method">
+      <h4>Preorder (Root-Left-Right)</h4>
+      <div class="traversal-sequence" id="preorderSequence">
+       —
+      </div>
+     </div>
+     <div class="traversal-method">
+      <h4>Postorder (Left-Right-Root)</h4>
+      <div class="traversal-sequence" id="postorderSequence">
+       —
+      </div>
+     </div>
+     <div class="traversal-method">
+      <h4>Level Order (BFS)</h4>
+      <div class="traversal-sequence" id="levelorderSequence">
+       —
+      </div>
+     </div>
+    </div>
+   </div>
+   <div class="info-box" id="infoBox">
+    🎯 Enter comma-separated values to build your BST, then click any traversal method to watch the animation!
+   </div>
+   <div id="modalOverlay" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+     <div class="modal-header"><span class="modal-icon" id="modalIcon">🌳</span>
+      <h2 id="modalTitle">Traversal Method</h2>
+     </div>
+     <div class="modal-body" id="modalBody"><!-- Content will be dynamically inserted -->
+     </div>
+     <div class="modal-footer"><button class="modal-button cancel" onclick="closeModal()">Cancel</button> <button class="modal-button" id="startButton" onclick="confirmTraversal()">Start Animation</button>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      main_title: "Binary Search Tree Traversals",
+      subtitle: "Watch nodes light up in traversal order! ✨"
+    };
+
+    class TreeNode {
+      constructor(value) {
+        this.value = value;
+        this.left = null;
+        this.right = null;
+      }
+    }
+
+    class BST {
+      constructor() {
+        this.root = null;
+      }
+
+      insert(value) {
+        const newNode = new TreeNode(value);
+        if (!this.root) {
+          this.root = newNode;
+          return;
+        }
+
+        let current = this.root;
+        while (true) {
+          if (value < current.value) {
+            if (!current.left) {
+              current.left = newNode;
+              return;
+            }
+            current = current.left;
+          } else if (value > current.value) {
+            if (!current.right) {
+              current.right = newNode;
+              return;
+            }
+            current = current.right;
+          } else {
+            return; // Duplicate value, ignore
+          }
+        }
+      }
+    }
+
+    let bst = new BST();
+    let isTraversing = false;
+    let traversalTimeout = null;
+    let animationSpeed = 800;
+    let selectedTraversalType = null;
+
+    const traversalInfo = {
+      inorder: {
+        icon: '📚',
+        title: 'Inorder Traversal',
+        order: 'Left → Root → Right',
+        description: 'Inorder traversal visits nodes in ascending order for a BST. It first explores the entire left subtree, then visits the root, and finally explores the right subtree.',
+        use: 'Perfect for getting sorted data from a BST! Also used in expression tree evaluation.',
+        example: `     50
+    /    \\
+   30      70
+  /  \\    /  \\
+ 20  40  60  80
+
+Result: 20 → 30 → 40 → 50 → 60 → 70 → 80`
+      },
+      preorder: {
+        icon: '🎯',
+        title: 'Preorder Traversal',
+        order: 'Root → Left → Right',
+        description: 'Preorder traversal visits the root first, then recursively visits the left subtree, followed by the right subtree.',
+        use: 'Used to create a copy of the tree, get prefix expressions, and serialize tree structures.',
+        example: `     50
+    /    \\
+   30      70
+  /  \\    /  \\
+ 20  40  60  80
+
+Result: 50 → 30 → 20 → 40 → 70 → 60 → 80`
+      },
+      postorder: {
+        icon: '🎨',
+        title: 'Postorder Traversal',
+        order: 'Left → Right → Root',
+        description: 'Postorder traversal visits both subtrees first (left then right), and visits the root last.',
+        use: 'Used for deleting trees, getting postfix expressions, and calculating directory sizes.',
+        example: `     50
+    /    \\
+   30      70
+  /  \\    /  \\
+ 20  40  60  80
+
+Result: 20 → 40 → 30 → 60 → 80 → 70 → 50`
+      },
+      levelorder: {
+        icon: '🌊',
+        title: 'Level Order Traversal',
+        order: 'Level by Level (BFS)',
+        description: 'Level order traversal visits nodes level by level from top to bottom, and left to right within each level. This is also called Breadth-First Search (BFS).',
+        use: 'Used to find shortest paths, level-wise processing, and building complete binary trees.',
+        example: `     50
+    /    \\
+   30      70
+  /  \\    /  \\
+ 20  40  60  80
+
+Result: 50 → 30 → 70 → 20 → 40 → 60 → 80`
+      }
+    };
+
+    function showModal(type) {
+      if (!bst.root) {
+        showMessage('Please build a BST first!', 'error');
+        return;
+      }
+
+      if (isTraversing) {
+        return;
+      }
+
+      selectedTraversalType = type;
+      const info = traversalInfo[type];
+
+      document.getElementById('modalIcon').textContent = info.icon;
+      document.getElementById('modalTitle').textContent = info.title;
+      
+      const modalBody = document.getElementById('modalBody');
+      modalBody.innerHTML = `
+        <div class="order-highlight">${info.order}</div>
+        <p><strong>How it works:</strong><br>${info.description}</p>
+        <h3>Common Uses:</h3>
+        <p>${info.use}</p>
+        <h3>Example:</h3>
+        <div class="example-tree">${info.example}</div>
+      `;
+
+      document.getElementById('modalOverlay').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').style.display = 'none';
+      selectedTraversalType = null;
+    }
+
+    function confirmTraversal() {
+      const type = selectedTraversalType;
+      closeModal();
+      if (type) {
+        setTimeout(() => {
+          executeTraversal(type);
+        }, 100);
+      }
+    }
+
+    function startTraversal(type) {
+      showModal(type);
+    }
+
+    function buildBSTFromInput() {
+      const input = document.getElementById('treeInput').value.trim();
+      
+      if (!input) {
+        showMessage('Please enter values to build the BST!', 'error');
+        return;
+      }
+
+      const values = input.split(',').map(v => parseInt(v.trim())).filter(v => !isNaN(v));
+      
+      if (values.length === 0) {
+        showMessage('Please enter valid numbers!', 'error');
+        return;
+      }
+
+      bst = new BST();
+      values.forEach(val => bst.insert(val));
+      
+      resetTraversalDisplay();
+      drawTree();
+      showMessage('BST built successfully! Now select a traversal method.', 'success');
+    }
+
+    function resetTraversalDisplay() {
+      document.getElementById('inorderSequence').textContent = '—';
+      document.getElementById('preorderSequence').textContent = '—';
+      document.getElementById('postorderSequence').textContent = '—';
+      document.getElementById('levelorderSequence').textContent = '—';
+    }
+
+    function showMessage(text, type) {
+      const infoBox = document.getElementById('infoBox');
+      infoBox.textContent = text;
+      
+      if (type === 'success') {
+        infoBox.style.background = 'linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)';
+      } else if (type === 'error') {
+        infoBox.style.background = 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)';
+      }
+      
+      setTimeout(() => {
+        infoBox.textContent = '🎯 Enter comma-separated values to build your BST, then click any traversal method to watch the animation!';
+        infoBox.style.background = 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)';
+      }, 3000);
+    }
+
+    async function executeTraversal(type) {
+      if (!bst.root) {
+        showMessage('Please build a BST first!', 'error');
+        return;
+      }
+
+      if (isTraversing) {
+        return;
+      }
+
+      // Reset tree visualization to default state
+      drawTree();
+
+      isTraversing = true;
+      disableButtons(true);
+      animationSpeed = parseInt(document.getElementById('speedSlider').value);
+
+      const sequence = [];
+      
+      if (type === 'inorder') {
+        await animateInorder(bst.root, sequence);
+      } else if (type === 'preorder') {
+        await animatePreorder(bst.root, sequence);
+      } else if (type === 'postorder') {
+        await animatePostorder(bst.root, sequence);
+      } else if (type === 'levelorder') {
+        await animateLevelOrder(bst.root, sequence);
+      }
+
+      if (isTraversing) {
+        document.getElementById(`${type}Sequence`).textContent = sequence.join(' → ');
+      }
+      
+      isTraversing = false;
+      disableButtons(false);
+    }
+
+    function stopTraversal() {
+      if (traversalTimeout) {
+        clearTimeout(traversalTimeout);
+      }
+      isTraversing = false;
+      disableButtons(false);
+      drawTree();
+    }
+
+    function disableButtons(disable) {
+      document.getElementById('inorderBtn').disabled = disable;
+      document.getElementById('preorderBtn').disabled = disable;
+      document.getElementById('postorderBtn').disabled = disable;
+      document.getElementById('levelorderBtn').disabled = disable;
+    }
+
+    async function animateInorder(node, sequence) {
+      if (!node || !isTraversing) return;
+
+      if (node.left) await animateInorder(node.left, sequence);
+      
+      if (isTraversing) {
+        await highlightNode(node.value);
+        sequence.push(node.value);
+      }
+      
+      if (node.right) await animateInorder(node.right, sequence);
+    }
+
+    async function animatePreorder(node, sequence) {
+      if (!node || !isTraversing) return;
+
+      await highlightNode(node.value);
+      sequence.push(node.value);
+      
+      if (node.left) await animatePreorder(node.left, sequence);
+      if (node.right) await animatePreorder(node.right, sequence);
+    }
+
+    async function animatePostorder(node, sequence) {
+      if (!node || !isTraversing) return;
+
+      if (node.left) await animatePostorder(node.left, sequence);
+      if (node.right) await animatePostorder(node.right, sequence);
+      
+      if (isTraversing) {
+        await highlightNode(node.value);
+        sequence.push(node.value);
+      }
+    }
+
+    async function animateLevelOrder(root, sequence) {
+      if (!root || !isTraversing) return;
+
+      const queue = [root];
+      
+      while (queue.length > 0 && isTraversing) {
+        const node = queue.shift();
+        
+        await highlightNode(node.value);
+        sequence.push(node.value);
+        
+        if (node.left) queue.push(node.left);
+        if (node.right) queue.push(node.right);
+      }
+    }
+
+    function highlightNode(value) {
+      return new Promise(resolve => {
+        const circle = document.getElementById(`node-${value}`);
+        if (circle) {
+          circle.style.fill = '#fbbf24';
+          circle.classList.add('visiting-node');
+          
+          traversalTimeout = setTimeout(() => {
+            circle.style.fill = 'url(#grad-visited)';
+            circle.classList.remove('visiting-node');
+            resolve();
+          }, animationSpeed);
+        } else {
+          resolve();
+        }
+      });
+    }
+
+    function drawTree() {
+      const svg = document.getElementById('treeSvg');
+      svg.innerHTML = '';
+
+      if (!bst.root) return;
+
+      const width = 700;
+      const height = 500;
+      const nodeRadius = 24;
+      
+      // Create gradients
+      const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+      
+      const gradDefault = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+      gradDefault.setAttribute('id', 'grad-default');
+      gradDefault.setAttribute('x1', '0%');
+      gradDefault.setAttribute('y1', '0%');
+      gradDefault.setAttribute('x2', '100%');
+      gradDefault.setAttribute('y2', '100%');
+      
+      const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+      stop1.setAttribute('offset', '0%');
+      stop1.setAttribute('stop-color', '#667eea');
+      gradDefault.appendChild(stop1);
+      
+      const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+      stop2.setAttribute('offset', '100%');
+      stop2.setAttribute('stop-color', '#764ba2');
+      gradDefault.appendChild(stop2);
+      
+      defs.appendChild(gradDefault);
+
+      const gradVisited = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+      gradVisited.setAttribute('id', 'grad-visited');
+      gradVisited.setAttribute('x1', '0%');
+      gradVisited.setAttribute('y1', '0%');
+      gradVisited.setAttribute('x2', '100%');
+      gradVisited.setAttribute('y2', '100%');
+      
+      const stop3 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+      stop3.setAttribute('offset', '0%');
+      stop3.setAttribute('stop-color', '#10b981');
+      gradVisited.appendChild(stop3);
+      
+      const stop4 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+      stop4.setAttribute('offset', '100%');
+      stop4.setAttribute('stop-color', '#059669');
+      gradVisited.appendChild(stop4);
+      
+      defs.appendChild(gradVisited);
+      svg.appendChild(defs);
+
+      const positions = new Map();
+
+      function calculatePositions(node, x, y, level, horizontalSpacing) {
+        if (!node) return;
+
+        positions.set(node.value, {x, y, level});
+
+        const spacing = horizontalSpacing / 2;
+        if (node.left) {
+          calculatePositions(node.left, x - spacing, y + 80, level + 1, spacing);
+        }
+        if (node.right) {
+          calculatePositions(node.right, x + spacing, y + 80, level + 1, spacing);
+        }
+      }
+
+      calculatePositions(bst.root, width / 2, 50, 0, width / 4);
+
+      function drawEdges(node) {
+        if (!node) return;
+
+        const pos = positions.get(node.value);
+        
+        if (node.left) {
+          const leftPos = positions.get(node.left.value);
+          const edge = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          edge.setAttribute('x1', pos.x);
+          edge.setAttribute('y1', pos.y);
+          edge.setAttribute('x2', leftPos.x);
+          edge.setAttribute('y2', leftPos.y);
+          edge.setAttribute('class', 'edge');
+          svg.appendChild(edge);
+          drawEdges(node.left);
+        }
+
+        if (node.right) {
+          const rightPos = positions.get(node.right.value);
+          const edge = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          edge.setAttribute('x1', pos.x);
+          edge.setAttribute('y1', pos.y);
+          edge.setAttribute('x2', rightPos.x);
+          edge.setAttribute('y2', rightPos.y);
+          edge.setAttribute('class', 'edge');
+          svg.appendChild(edge);
+          drawEdges(node.right);
+        }
+      }
+
+      drawEdges(bst.root);
+
+      positions.forEach((pos, value) => {
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('id', `node-${value}`);
+        circle.setAttribute('cx', pos.x);
+        circle.setAttribute('cy', pos.y);
+        circle.setAttribute('r', nodeRadius);
+        circle.setAttribute('fill', 'url(#grad-default)');
+        circle.setAttribute('class', 'node-circle');
+        circle.setAttribute('stroke', 'white');
+        circle.setAttribute('stroke-width', '3');
+        g.appendChild(circle);
+
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', pos.x);
+        text.setAttribute('y', pos.y + 5);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('fill', 'white');
+        text.setAttribute('class', 'node-text');
+        text.textContent = value;
+        g.appendChild(text);
+
+        svg.appendChild(g);
+      });
+    }
+
+    // Speed slider update
+    document.getElementById('speedSlider').addEventListener('input', (e) => {
+      animationSpeed = parseInt(e.target.value);
+    });
+
+    async function onConfigChange(config) {
+      const titleElement = document.getElementById('main-title');
+      const subtitleElement = document.getElementById('subtitle');
+      
+      titleElement.textContent = config.main_title || defaultConfig.main_title;
+      subtitleElement.textContent = config.subtitle || defaultConfig.subtitle;
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig: defaultConfig,
+        onConfigChange: onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ["main_title", config.main_title || defaultConfig.main_title],
+          ["subtitle", config.subtitle || defaultConfig.subtitle]
+        ])
+      });
+    }
+
+    // Create default BST
+    [50, 30, 70, 20, 40, 60, 80, 10, 25, 35, 45].forEach(val => bst.insert(val));
+    drawTree();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b25b574a07b6091',t:'MTc2NjQ3MDM2Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
